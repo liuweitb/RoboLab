@@ -1,0 +1,2 @@
+task_name,scene,instruction,episode_s,attributes,num_subtasks,difficulty_label
+OneBananaInBowlTask (one_banana_in_bowl.py),banana_bowl_3.usda,"**default:** Pick up one of the bananas and place it in the bowl<br>**vague:** Put a piece of fruit in the bowl<br>**specific:** Three yellow bananas are lying on the table around the bowl. Grasp any one of them and place it inside the bowl, then release it",300,"semantics, conjunction",1,simple

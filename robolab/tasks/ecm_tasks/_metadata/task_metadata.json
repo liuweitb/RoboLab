@@ -1,0 +1,23 @@
+[
+  {
+    "task_name": "OneBananaInBowlTask",
+    "instruction": "Pick up one of the bananas and place it in the bowl",
+    "instruction_variants": {
+      "default": "Pick up one of the bananas and place it in the bowl",
+      "vague": "Put a piece of fruit in the bowl",
+      "specific": "Three yellow bananas are lying on the table around the bowl. Grasp any one of them and place it inside the bowl, then release it"
+    },
+    "episode_s": "300",
+    "scene": "banana_bowl_3.usda",
+    "filename": "one_banana_in_bowl.py",
+    "contact_objects": "banana, banana_01, banana_02, bowl, table",
+    "terminations": "OneBananaInBowlTerminations",
+    "attributes": "semantics, conjunction",
+    "subtasks": "pick_and_place(groups=['banana', 'banana_01', 'banana_02'], logical=choose, k=1) score=1.0",
+    "num_sequential_stages": 1,
+    "num_atomic_conditions": 2,
+    "num_subtasks": 1,
+    "difficulty_score": 1,
+    "difficulty_label": "simple"
+  }
+]
