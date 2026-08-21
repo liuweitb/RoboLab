@@ -6,7 +6,7 @@ name = "robolab"
 version = "0.3.1"
 description = "A benchmark for simulation"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.12"
 license = {text = "Apache-2.0"}
 authors = [{name = "Xuning Yang"}]
 dependencies = [
@@ -55,6 +55,7 @@ dependencies = [
 isaac50 = [
     "isaaclab==2.2.0",
     "isaacsim[all,extscache]==5.0.0",
+    "warp-lang==1.7.1",
 ]
 isaac51 = [
     "isaaclab==2.3.2.post1",
