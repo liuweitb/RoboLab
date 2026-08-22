@@ -50,7 +50,7 @@ from robolab.eval.runner import add_common_eval_args, run_evaluation  # noqa: E4
 add_common_eval_args(parser)
 AppLauncher.add_app_launcher_args(parser)
 
-args_cli, _ = parser.parse_known_args()
+args_cli, _extras = parser.parse_known_args()
 args_cli.enable_cameras = True
 
 app_launcher = AppLauncher(args_cli)

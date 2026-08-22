@@ -1,23 +1,44 @@
 [
   {
     "task_name": "OneBananaInBowlTask",
-    "instruction": "Pick up one of the bananas and place it in the bowl",
+    "instruction": "Pick up the banana closest to the bowl and place it in the bowl",
     "instruction_variants": {
-      "default": "Pick up one of the bananas and place it in the bowl",
-      "vague": "Put a piece of fruit in the bowl",
-      "specific": "Three yellow bananas are lying on the table around the bowl. Grasp any one of them and place it inside the bowl, then release it"
+      "default": "Pick up the banana closest to the bowl and place it in the bowl",
+      "vague": "Put the nearest piece of fruit in the bowl",
+      "specific": "Three yellow bananas lie on the table. Grasp the one nearest the bowl, on the opposite side of the bowl from the other two, place it inside the bowl and release it"
     },
     "episode_s": "300",
     "scene": "banana_bowl_3.usda",
     "filename": "one_banana_in_bowl.py",
     "contact_objects": "banana, banana_01, banana_02, bowl, table",
     "terminations": "OneBananaInBowlTerminations",
-    "attributes": "semantics, conjunction",
-    "subtasks": "pick_and_place(groups=['banana', 'banana_01', 'banana_02'], logical=choose, k=1) score=1.0",
+    "attributes": "semantics, spatial",
+    "subtasks": "pick_and_place(groups=['banana_02'], logical=all) score=1.0",
     "num_sequential_stages": 1,
     "num_atomic_conditions": 2,
     "num_subtasks": 1,
-    "difficulty_score": 1,
+    "difficulty_score": 2,
+    "difficulty_label": "simple"
+  },
+  {
+    "task_name": "RubiksCubeInBowlTask",
+    "instruction": "Put the banana into the bowl",
+    "instruction_variants": {
+      "default": "Put the banana into the bowl",
+      "vague": "Put it into the bowl",
+      "specific": "Put the banana at the bottom of the bowl"
+    },
+    "episode_s": "50",
+    "scene": "ecm_scenes/rubiks_cube_banana.usda",
+    "filename": "rubiks_cube_in_bowl.py",
+    "contact_objects": "rubiks_cube, banana, bowl, table",
+    "terminations": "RubiksCubeInBowlTerminations",
+    "attributes": "semantics, spatial",
+    "subtasks": "pick_and_place(groups=['rubiks_cube'], logical=all) score=1.0",
+    "num_sequential_stages": 1,
+    "num_atomic_conditions": 2,
+    "num_subtasks": 1,
+    "difficulty_score": 2,
     "difficulty_label": "simple"
   }
 ]

@@ -47,6 +47,7 @@ dependencies = [
     "fastapi",
     "uvicorn[standard]",
     "jinja2",
+    "openai>=2.28.0",
 ]
 
 [project.optional-dependencies]

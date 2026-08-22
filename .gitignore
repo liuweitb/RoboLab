@@ -46,3 +46,4 @@ pyrightconfig.json
 .claude/commands
 ${data}/
 log/
+.env
