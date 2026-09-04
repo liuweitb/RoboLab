@@ -1,5 +1,47 @@
 [
   {
+    "task_name": "BagelsInBowlBananasInPlateTask",
+    "instruction": "Pick up the yellow banana and place it flat on the white ceramic plate, then put the two bagels in the bowl",
+    "instruction_variants": {
+      "default": "Pick up the yellow banana and place it flat on the white ceramic plate, then put the two bagels in the bowl",
+      "referential": "sort things out",
+      "intent": "help me prepare for the breakfast"
+    },
+    "episode_s": "180",
+    "scene": "ecm_scenes/bagel_plate_banana_bowl.usda",
+    "filename": "bagels_in_bowl_bananas_in_plate.py",
+    "contact_objects": "banana, bagel_00, bagel_06, bowl, plate_large, table",
+    "terminations": "BagelsInBowlBananasInPlateTerminations",
+    "attributes": "semantics, sorting, spatial",
+    "subtasks": "place_bagels_in_bowl(groups=['bagel_00', 'bagel_06'], logical=all) score=0.5; place_banana_on_plate(groups=['banana'], logical=all) score=0.5",
+    "num_sequential_stages": 2,
+    "num_atomic_conditions": 11,
+    "num_subtasks": 3,
+    "difficulty_score": 5,
+    "difficulty_label": "complex"
+  },
+  {
+    "task_name": "BananaInBowlTask",
+    "instruction": "Put the banana into the bowl",
+    "instruction_variants": {
+      "default": "Put the banana into the bowl",
+      "vague": "Put it into the bowl",
+      "specific": "Put the banana at the bottom of the bowl"
+    },
+    "episode_s": "50",
+    "scene": "ecm_scenes/rubiks_cube_banana.usda",
+    "filename": "banana_in_bowl.py",
+    "contact_objects": "rubiks_cube, banana, bowl, table",
+    "terminations": "BananaInBowlTermination",
+    "attributes": "semantics, spatial",
+    "subtasks": "pick_and_place_banana(groups=['banana'], logical=all) score=1.0",
+    "num_sequential_stages": 1,
+    "num_atomic_conditions": 4,
+    "num_subtasks": 1,
+    "difficulty_score": 2,
+    "difficulty_label": "simple"
+  },
+  {
     "task_name": "OneBananaInBowlTask",
     "instruction": "Pick up the banana closest to the bowl and place it in the bowl",
     "instruction_variants": {
@@ -21,12 +63,75 @@
     "difficulty_label": "simple"
   },
   {
-    "task_name": "RubiksCubeInBowlTask",
-    "instruction": "Put the banana into the bowl",
+    "task_name": "PlaceWhiteFaceUpRubiksCubeTask",
+    "instruction": "Pick up the Rubiks Cube with the white face facing up and place it in the bowl",
     "instruction_variants": {
-      "default": "Put the banana into the bowl",
+      "default": "Pick up the Rubiks Cube with the white face on top and place it in the bowl",
+      "referential": "Put that cube into the bowl",
+      "spelling": "Puck that Magic Cube withe the whote surface on top and place it in the bowl"
+    },
+    "episode_s": "60",
+    "scene": "ecm_scenes/three_rubiks_cube_bowl.usda",
+    "filename": "place_white_face_up_rubiks_cube.py",
+    "contact_objects": "rubiks_cube_target, rubiks_cube, rubiks_cube_01, bowl, table",
+    "terminations": "PlaceWhiteFaceUpRubiksCubeTerminations",
+    "attributes": "color, semantics, spatial",
+    "subtasks": "pick_and_place_white_face_up_cube(groups=['rubiks_cube_target'], logical=all) score=1.0",
+    "num_sequential_stages": 1,
+    "num_atomic_conditions": 4,
+    "num_subtasks": 1,
+    "difficulty_score": 2,
+    "difficulty_label": "simple"
+  },
+  {
+    "task_name": "PutMustardRightBinTask",
+    "instruction": "Pick up the mustard and put it in the right bin.",
+    "instruction_variants": {
+      "default": "Pick up the mustard and put it in the right bin.",
+      "referential": "Pick up the yellow stuff and put it in that bin",
+      "intent": "I need to use the mustard later."
+    },
+    "episode_s": "60",
+    "scene": "ecm_scenes/two_bin_mustard.usda",
+    "filename": "put_mustard_right_bin.py",
+    "contact_objects": "mustard, grey_bin_right, grey_bin_left, table",
+    "terminations": "PutMustardRightBinTerminations",
+    "attributes": "semantics, spatial",
+    "subtasks": "pick_and_place_mustard_right_bin(groups=['mustard'], logical=all) score=1.0",
+    "num_sequential_stages": 1,
+    "num_atomic_conditions": 4,
+    "num_subtasks": 1,
+    "difficulty_score": 2,
+    "difficulty_label": "simple"
+  },
+  {
+    "task_name": "PutPumpkinInBinTask",
+    "instruction": "Pick up the big and small pumpkins from the table and place them all into the bin",
+    "instruction_variants": {
+      "default": "Pick up the big and small pumpkins from the table and place them all into the bin",
+      "referential": "Put two fruits and place them all into the bin",
+      "spelling": "Puck up the pumppins from the table and place them all into the bun."
+    },
+    "episode_s": "120",
+    "scene": "ecm_scenes/clutter_fruit_bottle_bluebin.usda",
+    "filename": "put_pumpkin_in_bin.py",
+    "contact_objects": "pumpkinlarge, pumpkinsmall, right_bin, table, lemon_01, lemon_02, lime01, lime01_01, orange_01, orange_02, pomegranate01, avocado01, red_onion, whitepackerbottle_a01, milkjug_a01, utilityjug_a03, crabbypenholder, serving_bowl",
+    "terminations": "PutPumpkinInBinTerminations",
+    "attributes": "semantics, size, counting, spatial",
+    "subtasks": "pick_and_place_pumpkinlarge(groups=['pumpkinlarge'], logical=all) score=0.5; pick_and_place_pumpkinsmall(groups=['pumpkinsmall'], logical=all) score=0.5",
+    "num_sequential_stages": 2,
+    "num_atomic_conditions": 8,
+    "num_subtasks": 2,
+    "difficulty_score": 4,
+    "difficulty_label": "moderate"
+  },
+  {
+    "task_name": "RubiksCubeInBowlTask",
+    "instruction": "Put the rubiks cube into the bowl",
+    "instruction_variants": {
+      "default": "Put the rubiks cube into the bowl",
       "vague": "Put it into the bowl",
-      "specific": "Put the banana at the bottom of the bowl"
+      "specific": "Put the rubiks at the bottom of the bowl"
     },
     "episode_s": "50",
     "scene": "ecm_scenes/rubiks_cube_banana.usda",
@@ -34,9 +139,9 @@
     "contact_objects": "rubiks_cube, banana, bowl, table",
     "terminations": "RubiksCubeInBowlTerminations",
     "attributes": "semantics, spatial",
-    "subtasks": "pick_and_place(groups=['rubiks_cube'], logical=all) score=1.0",
+    "subtasks": "pick_and_place_rubiks_cube_only(groups=['rubiks_cube'], logical=all) score=1.0",
     "num_sequential_stages": 1,
-    "num_atomic_conditions": 2,
+    "num_atomic_conditions": 4,
     "num_subtasks": 1,
     "difficulty_score": 2,
     "difficulty_label": "simple"

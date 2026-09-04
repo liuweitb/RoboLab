@@ -190,16 +190,31 @@ class ECMClarifyingClient(Pi0DroidJointposClient):
         # Define the rephrasor from base model
         self.rephrasor = TranslatorClient(model=rephrase_model, base_url=rephrase_url)
 
-    def begin_episode(self, episode_idx: int) -> None:
-        super().begin_episode(episode_idx)
+        # Also set here, not just in begin_episode(), so the client is never in a
+        # half-built state if something calls infer_batch() without an episode.
+        self._reset_dialog_state()
+
+    def _reset_dialog_state(self) -> None:
         self.phase = "clarify"
         self.instruction = None
         self.speak = ""
         self.steps = 0
         self.intention = ""
 
-    def infer_batch(self, obs, instruction: str, *, env_ids: list[int]) -> dict:
+    def begin_episode(self, episode_idx: int) -> None:
+        super().begin_episode(episode_idx)
+        self._reset_dialog_state()
+
+    def infer_batch(self, obs, instruction: str, *, env_ids: list[int]) -> dict[int, dict]:
         # The instruction argument is fixed for the episode; we swap in our own.
+        if not env_ids:
+            return {}
+        if len(env_ids) > 1:
+            raise RuntimeError(
+                f"ECMClarifyingClient drives one terminal dialog and keeps a single "
+                f"instruction for the whole batch, but got {len(env_ids)} envs. "
+                f"Re-run with --num-envs 1."
+            )
         if self.phase == "clarify":
             self.instruction = self._clarify(obs, instruction, env_ids[0])
         elif self.phase == "indicate" and self.steps >= self.indication_steps:
@@ -207,11 +222,16 @@ class ECMClarifyingClient(Pi0DroidJointposClient):
         self.steps += 1
         return super().infer_batch(obs, self.instruction, env_ids=env_ids)
 
-    def _enter(self, phase: str) -> None:
-        """Switch phase, dropping the action chunk queued under the old instruction."""
+    def _enter(self, phase: str, prompt: str) -> None:
+        """Switch phase, dropping the action chunk queued under the old instruction.
+
+        ``prompt`` is echoed because it, not the task instruction the runner prints
+        at episode start, is what actually reaches the policy server.
+        """
         self.phase = phase
         self.steps = 0
         super().reset()
+        print(f"\033[96m[ECM][PHASE] {phase} -> policy prompt: {prompt!r}\033[0m", flush=True)
 
     def _clarify(self, obs, instruction: str, env_id: int) -> str:
         """Ask ECM what to say and do. On failure, just run the task instruction."""
@@ -219,24 +239,35 @@ class ECMClarifyingClient(Pi0DroidJointposClient):
         try:
             reply = self.ecm.ask(frame, instruction)
         except Exception as error:
-            print(f"\033[93m[ECM][ERROR] request failed ({type(error).__name__}: {error}); running task instruction.\033[0m")
-            self._enter("execute")
+            # Loud and with the traceback: the quiet version of this path is
+            # indistinguishable from ECM being skipped entirely, because the
+            # fallback hands the policy the very instruction ECM exists to hide.
+            print(
+                f"\033[91m[ECM][ERROR] request to {self.ecm.model} failed "
+                f"({type(error).__name__}: {error}).\n"
+                f"[ECM][ERROR] FALLING BACK to the task instruction — the policy will "
+                f"see {instruction!r} and no clarification will happen.\033[0m",
+                flush=True,
+            )
+            traceback.print_exc()
+            self._enter("execute", instruction)
             return instruction
 
         self.speak = reply.speak
         self.intention = reply.intention
-        print(f"[ECM][INFO] speak    : {reply.speak}")
-        print(f"[ECM][INFO] intention: {reply.intention}")
-        self._enter("indicate")
+        print(f"[ECM][INFO] speak    : {reply.speak}", flush=True)
+        print(f"[ECM][INFO] intention: {reply.intention}", flush=True)
+        self._enter("indicate", reply.intention)
         return reply.intention
 
     def _confirm(self, obs, instruction: str, env_id: int) -> str:
         """Take the user's reply. Yes -> finish the task; anything else -> translate it."""
-        answer = input(f"\n\033[96m[ECM] {self.speak}\033[0m\n[you] ").strip()
-        self._enter("execute")
+        answer = input(f"[ECM] {self.speak}\n[user] ").strip()
 
         if answer.lower().startswith(("y", "correct", "right")):
-            return self.confirm_instruction or instruction
+            confirmed = self.confirm_instruction or instruction
+            self._enter("execute", confirmed)
+            return confirmed
 
         # A base model turns the reply into an unambiguous instruction for the policy.
         try:
@@ -244,9 +275,16 @@ class ECMClarifyingClient(Pi0DroidJointposClient):
                 instruction, self.speak, self.intention, answer
             )
         except Exception as error:
-            print(f"[ECM][ERROR] translator failed; running task instruction.")
+            print(
+                f"\033[91m[ECM][ERROR] translator {self.rephrasor.model} failed "
+                f"({type(error).__name__}: {error}); running task instruction.\033[0m",
+                flush=True,
+            )
+            traceback.print_exc()
+            self._enter("execute", instruction)
             return instruction
-        print(f"[ECM][ERROR] rephrased: {rephrased}")
+        print(f"[ECM] rephrased: {rephrased}", flush=True)
+        self._enter("execute", rephrased)
         return rephrased
 
 

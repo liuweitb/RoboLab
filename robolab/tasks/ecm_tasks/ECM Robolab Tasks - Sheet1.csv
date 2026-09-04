@@ -1,0 +1,15 @@
+Image,Scene Name,Task Name,Termination Condition,Instructions
+,`three_rubiks_cube_bowl.usda`,PlaceWhiteFaceUpRubiksCubeTask,Sccess 1: `rubiks_cube_target` is in the `bowl`.,Default: Pick up the Rubiks Cube with the white face on top and place it in the bowl
+,,,Fail 1: Time out,Referential: Put that cube into the bowl
+,,,Fail 2: `rubiks_cube` or `rubiks_cube_01` in the `boal` (trigger a timeout),Spelling: Puck that Magic Cube withe the whote surface on top and place it in the bowl
+,`two_bin_mustard.usda`,PutMustardRightBinTask,Success 1: `mustard` is in the `grey_bin_right_target`,Default: Pick up the mustard and put it in the right bin.
+,,,Fail 1: Time out,Referential: Pick up the yellow stuff and put it in that bin
+,,,Fail 2: `mustard` is in the `left_bin` (trigger a timeout),Intent: I need to use the mustard later.
+,`clutter_fruit_bottle_bluebin.usda`,PutPumpkinInBinTask,Success 1: `pumpkin_large` and `pumpkin_small` are in the `right_bin`,Default: Pick up the big and small pumpkins from the table and place them all into the bin
+,,,Fail 1: Time out,Referential: Put two fruits and place them all into the bin
+,,,Fail2: Any objects except the two pumpkins are in the `right_bin` (trigger a timeout),Spelling: Puck up the pumppins from the table and place them all into the bun.
+,`bagel_plate_banana_bowl.usda`,BagelsInBowlBananasInPlateTask,Success 1: Subtask 1: `bagel_00` and `bagel_06` are in the `bowl` (Score 0.5); Subtask 2: `banana` is in the `plate_large`,"Default: Pick up the yellow banana and place it flat on the white ceramic plate, then put the two bagels in the bowl"
+,,,Fail 1: Time out,Referential: sort things out
+,,,Fail 2: `bagel_00` is in the `plate_large`,intent: help me prepare for the breakfast
+,,,Fail 3: `bagel_06` is in the `plate_large`,
+,,,Fail 4: `banana` is in the `bowl`,

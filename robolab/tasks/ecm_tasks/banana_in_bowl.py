@@ -20,10 +20,10 @@ from robolab.core.task.task import Task
 
 
 @configclass
-class RubiksCubeInBowlTerminations:
-    """Success when the rubiks cube is resting inside the bowl and the gripper has released it.
+class BananaInBowlTermination:
+    """Success when the banana is resting inside the bowl and the gripper has released it.
 
-    The banana is a distractor: placing it in the bowl aborts the episode as a
+    The rubiks cube is a distractor: placing it in the bowl aborts the episode as a
     truncation, so it can never be scored as success.
     """
 
@@ -31,7 +31,7 @@ class RubiksCubeInBowlTerminations:
     undesired_behavior = DoneTerm(
         func=object_in_container,
         params={
-            "object": "banana",
+            "object": "rubiks_cube",
             "container": "bowl",
             "tolerance": 0.0,
             "require_contact_with": True,
@@ -42,7 +42,7 @@ class RubiksCubeInBowlTerminations:
     success = DoneTerm(
         func=object_in_container,
         params={
-            "object": "rubiks_cube",
+            "object": "banana",
             "container": "bowl",
             "tolerance": 0.0,
             "require_contact_with": True,
@@ -52,33 +52,31 @@ class RubiksCubeInBowlTerminations:
 
 
 @dataclass
-class RubiksCubeInBowlTask(Task):
+class BananaInBowlTask(Task):
     contact_object_list = ["rubiks_cube", "banana", "bowl", "table"]
     # Explicit subfolder: a same-named scene also sits directly in assets/scenes/,
     # so a bare filename would resolve ambiguously.
     scene = import_scene("ecm_scenes/rubiks_cube_banana.usda", contact_object_list)
-    terminations = RubiksCubeInBowlTerminations
+    terminations = BananaInBowlTermination
     instruction = {
-        "default": "Put the rubiks cube into the bowl",
+        "default": "Put the banana into the bowl",
         "vague": "Put it into the bowl",
-        "specific": "Put the rubiks at the bottom of the bowl",
+        "specific": "Put the banana at the bottom of the bowl",
     }
     episode_length_s: int = 50
     attributes = ["semantics", "spatial"]
 
-    # Only the rubiks cube counts: the banana is a distractor and is deliberately
-    # absent from the ladder, so manipulating it never advances the score.
     subtasks = [
         Subtask(
             conditions={
-                "rubiks_cube": [
-                    (partial(object_grabbed, object="rubiks_cube"), 0.1),
-                    (partial(object_above_bottom, object="rubiks_cube", reference_object="bowl"), 0.2),
-                    (partial(object_dropped, object="rubiks_cube"), 0.3),
+                "banana": [
+                    (partial(object_grabbed, object="banana"), 0.1),
+                    (partial(object_above_bottom, object="banana", reference_object="bowl"), 0.2),
+                    (partial(object_dropped, object="banana"), 0.3),
                     (
                         partial(
                             object_in_container,
-                            object="rubiks_cube",
+                            object="banana",
                             container="bowl",
                             tolerance=0.0,
                             require_contact_with=True,
@@ -89,6 +87,6 @@ class RubiksCubeInBowlTask(Task):
                 ],
             },
             logical="all",
-            name="pick_and_place_rubiks_cube_only",
+            name="pick_and_place_banana",
         ),
     ]
