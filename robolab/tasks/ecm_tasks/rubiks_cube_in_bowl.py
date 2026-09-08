@@ -61,6 +61,7 @@ class RubiksCubeInBowlTask(Task):
     instruction = {
         "default": "Put the rubiks cube into the bowl",
         "vague": "Put it into the bowl",
+        "referential": "Put that into the bowl",
         "specific": "Put the rubiks at the bottom of the bowl",
     }
     episode_length_s: int = 50

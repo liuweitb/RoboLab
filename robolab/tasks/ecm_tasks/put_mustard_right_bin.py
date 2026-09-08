@@ -61,6 +61,7 @@ class PutMustardRightBinTask(Task):
         "default": "Pick up the mustard and put it in the right bin.",
         "referential": "Pick up the yellow stuff and put it in that bin",
         "intent": "I need to use the mustard later.",
+        "specific": "Pick up the mustard and put it in the right bin.",
     }
     episode_length_s: int = 60
     attributes = ["semantics", "spatial"]

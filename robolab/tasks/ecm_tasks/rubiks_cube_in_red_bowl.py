@@ -19,29 +19,28 @@ from robolab.core.task.task import Task
 
 
 @configclass
-class TwoApplesLeftInBowlTerminations:
-    """Success when the left-hand apple is resting inside the red bowl.
+class RubiksCubeInRedBowlTerminations:
+    """Success when the Rubik's cube is resting inside the red bowl.
 
-    Dropping the right-hand apple into the bowl aborts the episode as a truncation.
+    Dropping it into the grey bin aborts the episode as a truncation.
     """
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     undesired_behavior = DoneTerm(
         func=object_in_container,
         params={
-            "object": ["apple_right"],
-            "container": "bowl",
+            "object": "rubiks_cube",
+            "container": "bin_b03",
             "tolerance": 0.0,
             "require_contact_with": True,
             "require_gripper_detached": True,
-            "logical": "any",
         },
         time_out=True,
     )
     success = DoneTerm(
         func=object_in_container,
         params={
-            "object": "apple_left",
+            "object": "rubiks_cube",
             "container": "bowl",
             "tolerance": 0.0,
             "require_contact_with": True,
@@ -51,37 +50,36 @@ class TwoApplesLeftInBowlTerminations:
 
 
 @dataclass
-class TwoApplesLeftInBowlTask(Task):
-    """Clarification target: two identical apples; the ground truth is the one on the robot's left.
+class RubiksCubeInRedBowlTask(Task):
+    """Clarification target: one cube, two containers (red bowl left, grey bin right); the ground truth is the bowl.
 
-    Under the ambiguous prompt pi05 grabs the right-hand apple by default (measured), so the
-    baseline fails unless the ambiguity is resolved; the one-line specific prompt names the
-    target by position.
+    Under the ambiguous prompt pi05 uses the grey bin on the right by default (measured), so the
+    baseline fails unless the destination is clarified.
     """
 
-    contact_object_list = ["apple_left", "apple_right", "bowl", "table"]
-    scene = import_scene("ecm_scenes/two_apples_bowl.usda", contact_object_list)
-    terminations = TwoApplesLeftInBowlTerminations
+    contact_object_list = ["rubiks_cube", "bowl", "bin_b03", "table"]
+    scene = import_scene("ecm_scenes/rubiks_cube_bowl_bin.usda", contact_object_list)
+    terminations = RubiksCubeInRedBowlTerminations
     instruction = {
-        "default": "Put the left apple in the bowl",
-        "vague": "Put the apple in the bowl",
-        "referential": "Put that apple in the bowl",
-        "specific": "Put the left apple in the bowl",
+        "default": "Put the cube in the red bowl",
+        "vague": "Put the cube in the container",
+        "referential": "Put the cube in there",
+        "specific": "Put the cube in the red bowl",
     }
     episode_length_s: int = 60
-    attributes = ["semantics", "spatial"]
+    attributes = ["semantics", "color"]
 
     # Only the target advances the score; distractors are deliberately absent from the ladder.
     subtasks = [
         Subtask(
             conditions={
-                "apple_left": [
-                    (partial(object_grabbed, object="apple_left"), 0.3),
-                    (partial(object_picked_up, object="apple_left", surface="table"), 0.3),
+                "rubiks_cube": [
+                    (partial(object_grabbed, object="rubiks_cube"), 0.3),
+                    (partial(object_picked_up, object="rubiks_cube", surface="table"), 0.3),
                     (
                         partial(
                             object_in_container,
-                            object="apple_left",
+                            object="rubiks_cube",
                             container="bowl",
                             tolerance=0.0,
                             require_contact_with=True,
@@ -92,6 +90,6 @@ class TwoApplesLeftInBowlTask(Task):
                 ],
             },
             logical="all",
-            name="pick_and_place_apple_left",
+            name="pick_and_place_rubiks_cube_bowl",
         ),
     ]

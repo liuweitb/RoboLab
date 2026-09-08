@@ -19,17 +19,17 @@ from robolab.core.task.task import Task
 
 
 @configclass
-class TwoApplesLeftInBowlTerminations:
-    """Success when the left-hand apple is resting inside the red bowl.
+class BlueBlockPairInBowlTerminations:
+    """Success when the blue block (left) is resting inside the red bowl.
 
-    Dropping the right-hand apple into the bowl aborts the episode as a truncation.
+    Dropping the red block into the bowl aborts the episode as a truncation.
     """
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     undesired_behavior = DoneTerm(
         func=object_in_container,
         params={
-            "object": ["apple_right"],
+            "object": ["red_block"],
             "container": "bowl",
             "tolerance": 0.0,
             "require_contact_with": True,
@@ -41,7 +41,7 @@ class TwoApplesLeftInBowlTerminations:
     success = DoneTerm(
         func=object_in_container,
         params={
-            "object": "apple_left",
+            "object": "blue_block",
             "container": "bowl",
             "tolerance": 0.0,
             "require_contact_with": True,
@@ -51,37 +51,37 @@ class TwoApplesLeftInBowlTerminations:
 
 
 @dataclass
-class TwoApplesLeftInBowlTask(Task):
-    """Clarification target: two identical apples; the ground truth is the one on the robot's left.
+class BlueBlockPairInBowlTask(Task):
+    """Clarification target: two blocks that differ only in colour; the ground truth is the blue one.
 
-    Under the ambiguous prompt pi05 grabs the right-hand apple by default (measured), so the
+    Under the ambiguous prompt pi05 grabs the right-hand red block by default (measured), so the
     baseline fails unless the ambiguity is resolved; the one-line specific prompt names the
-    target by position.
+    target by colour.
     """
 
-    contact_object_list = ["apple_left", "apple_right", "bowl", "table"]
-    scene = import_scene("ecm_scenes/two_apples_bowl.usda", contact_object_list)
-    terminations = TwoApplesLeftInBowlTerminations
+    contact_object_list = ["blue_block", "red_block", "bowl", "table"]
+    scene = import_scene("ecm_scenes/two_blocks_bowl.usda", contact_object_list)
+    terminations = BlueBlockPairInBowlTerminations
     instruction = {
-        "default": "Put the left apple in the bowl",
-        "vague": "Put the apple in the bowl",
-        "referential": "Put that apple in the bowl",
-        "specific": "Put the left apple in the bowl",
+        "default": "Put the blue block in the bowl",
+        "vague": "Put the block in the bowl",
+        "referential": "Put that block in the bowl",
+        "specific": "Put the blue block in the bowl",
     }
     episode_length_s: int = 60
-    attributes = ["semantics", "spatial"]
+    attributes = ["color", "semantics"]
 
     # Only the target advances the score; distractors are deliberately absent from the ladder.
     subtasks = [
         Subtask(
             conditions={
-                "apple_left": [
-                    (partial(object_grabbed, object="apple_left"), 0.3),
-                    (partial(object_picked_up, object="apple_left", surface="table"), 0.3),
+                "blue_block": [
+                    (partial(object_grabbed, object="blue_block"), 0.3),
+                    (partial(object_picked_up, object="blue_block", surface="table"), 0.3),
                     (
                         partial(
                             object_in_container,
-                            object="apple_left",
+                            object="blue_block",
                             container="bowl",
                             tolerance=0.0,
                             require_contact_with=True,
@@ -92,6 +92,6 @@ class TwoApplesLeftInBowlTask(Task):
                 ],
             },
             logical="all",
-            name="pick_and_place_apple_left",
+            name="pick_and_place_blue_block",
         ),
     ]

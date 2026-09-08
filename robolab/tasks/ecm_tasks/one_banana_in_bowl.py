@@ -32,6 +32,7 @@ class OneBananaInBowlTask(Task):
     instruction = {
         "default": "Pick up the banana closest to the bowl and place it in the bowl",
         "vague": "Put the nearest piece of fruit in the bowl",
+        "referential": "Put that banana in the bowl",
         "specific": "Three yellow bananas lie on the table. Grasp the one nearest the bowl, on the opposite side of the bowl from the other two, place it inside the bowl and release it",
     }
     episode_length_s: int = 300

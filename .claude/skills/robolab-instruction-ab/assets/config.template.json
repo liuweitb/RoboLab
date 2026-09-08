@@ -1,0 +1,57 @@
+{
+  "_comment": "Copy into the experiment folder as config.json and fill in. Everything the run depends on is recorded here so the experiment is reproducible. Delete the _comment keys.",
+  "experiment": "<one-line description, e.g. ECM oracle-clear (specific) vs baseline (referential)>",
+  "created": "<ISO timestamp>",
+  "repo": "/y/home/weiliutb/robocalypse/RoboLab",
+  "code_revision": "<git rev-parse HEAD>",
+  "working_tree": "<clean, or what is uncommitted>",
+  "host": "<machine running Isaac>",
+  "output_prefix": "<unique prefix; runner output goes to output/<prefix>_<condition>_s<session>>",
+  "_comment_prefix": "Must be unused. Reusing a prefix makes the driver think episodes are done and skip work.",
+
+  "conditions": {"a": "specific", "b": "referential"},
+  "_comment_conditions": "a is the clear/treatment arm, b the baseline. These strings are passed to --instruction-type and must be keys in every task's instruction dict; verify with check_variants.py.",
+
+  "policy_server": {"host": "<host>", "port": 8001, "policy": "pi05"},
+  "runner": "policies/pi0_family/run.py",
+  "task_dirs": [],
+  "_comment_task_dirs": "Leave empty to use the repo default task dirs, or give absolute paths to run tasks that live outside the repo tree.",
+
+  "episodes_per_condition_per_task": 3,
+  "num_envs": 3,
+  "num_runs": 1,
+  "block_size": 4,
+  "max_attempts": 12,
+  "cooldown_s": 60,
+  "bootstrap_reps": 20000,
+
+  "env_seed": 1,
+  "initial_state": "deterministic reset_scene_to_default (no pose randomization); identical across episodes and conditions; matched pairs are (task, env_id)",
+  "condition_order": "ABBA by block: even blocks run condition a first, odd blocks run condition b first",
+  "retry_policy": "Kit startup crashes retried up to max_attempts per (block, condition) with a startup lock and a global cool-down; the runner resumes and skips completed runs; unresolved blocks are reported",
+  "success_signal": "env termination `success` term as recorded by robolab.eval.summarize (truncations including undesired_behavior count as failure)",
+  "design": "<why each task can show an instruction effect: the target must not be the policy's default pick; see references/task_design.md>",
+
+  "execution": {
+    "tmux_sessions": {
+      "<name>_s1": {"gpu": 6, "blocks": [0, 1, 2], "session_id": 1},
+      "<name>_s2": {"gpu": 7, "blocks": [3, 4, 5], "session_id": 2}
+    }
+  },
+
+  "excluded_tasks": [],
+  "_comment_excluded": "Tasks left out and why, e.g. missing an instruction variant.",
+
+  "tasks": [
+    {
+      "task": "<TaskClassName>",
+      "file": "<task_file.py>",
+      "scene": "<scene.usda>",
+      "episode_s": 60,
+      "specific": "<the clear instruction string>",
+      "referential": "<the ambiguous instruction string>",
+      "target": "<ground-truth object>",
+      "default_pick": "<object the policy grabs under the ambiguous prompt; must differ from target>"
+    }
+  ]
+}

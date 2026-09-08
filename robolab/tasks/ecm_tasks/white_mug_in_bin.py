@@ -19,18 +19,18 @@ from robolab.core.task.task import Task
 
 
 @configclass
-class TwoApplesLeftInBowlTerminations:
-    """Success when the left-hand apple is resting inside the red bowl.
+class WhiteMugInBinTerminations:
+    """Success when the white mug (right of the row) is resting inside the grey bin.
 
-    Dropping the right-hand apple into the bowl aborts the episode as a truncation.
+    Dropping either other mug into the bin aborts the episode as a truncation.
     """
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     undesired_behavior = DoneTerm(
         func=object_in_container,
         params={
-            "object": ["apple_right"],
-            "container": "bowl",
+            "object": ["red_mug", "ceramic_mug"],
+            "container": "bin_b03",
             "tolerance": 0.0,
             "require_contact_with": True,
             "require_gripper_detached": True,
@@ -41,8 +41,8 @@ class TwoApplesLeftInBowlTerminations:
     success = DoneTerm(
         func=object_in_container,
         params={
-            "object": "apple_left",
-            "container": "bowl",
+            "object": "white_mug",
+            "container": "bin_b03",
             "tolerance": 0.0,
             "require_contact_with": True,
             "require_gripper_detached": True,
@@ -51,38 +51,38 @@ class TwoApplesLeftInBowlTerminations:
 
 
 @dataclass
-class TwoApplesLeftInBowlTask(Task):
-    """Clarification target: two identical apples; the ground truth is the one on the robot's left.
+class WhiteMugInBinTask(Task):
+    """Clarification target: three mugs of different colours; the ground truth is the white one.
 
-    Under the ambiguous prompt pi05 grabs the right-hand apple by default (measured), so the
+    Under the ambiguous prompt pi05 grabs the centre blue-and-white ceramic mug by default (measured), so the
     baseline fails unless the ambiguity is resolved; the one-line specific prompt names the
-    target by position.
+    target by colour.
     """
 
-    contact_object_list = ["apple_left", "apple_right", "bowl", "table"]
-    scene = import_scene("ecm_scenes/two_apples_bowl.usda", contact_object_list)
-    terminations = TwoApplesLeftInBowlTerminations
+    contact_object_list = ["red_mug", "ceramic_mug", "white_mug", "bin_b03", "table"]
+    scene = import_scene("ecm_scenes/mugs_three_bin.usda", contact_object_list)
+    terminations = WhiteMugInBinTerminations
     instruction = {
-        "default": "Put the left apple in the bowl",
-        "vague": "Put the apple in the bowl",
-        "referential": "Put that apple in the bowl",
-        "specific": "Put the left apple in the bowl",
+        "default": "Put the white mug in the bin",
+        "vague": "Put the mug in the bin",
+        "referential": "Put that mug in the bin",
+        "specific": "Put the white mug in the bin",
     }
     episode_length_s: int = 60
-    attributes = ["semantics", "spatial"]
+    attributes = ["color", "semantics"]
 
     # Only the target advances the score; distractors are deliberately absent from the ladder.
     subtasks = [
         Subtask(
             conditions={
-                "apple_left": [
-                    (partial(object_grabbed, object="apple_left"), 0.3),
-                    (partial(object_picked_up, object="apple_left", surface="table"), 0.3),
+                "white_mug": [
+                    (partial(object_grabbed, object="white_mug"), 0.3),
+                    (partial(object_picked_up, object="white_mug", surface="table"), 0.3),
                     (
                         partial(
                             object_in_container,
-                            object="apple_left",
-                            container="bowl",
+                            object="white_mug",
+                            container="bin_b03",
                             tolerance=0.0,
                             require_contact_with=True,
                             require_gripper_detached=True,
@@ -92,6 +92,6 @@ class TwoApplesLeftInBowlTask(Task):
                 ],
             },
             logical="all",
-            name="pick_and_place_apple_left",
+            name="pick_and_place_white_mug",
         ),
     ]

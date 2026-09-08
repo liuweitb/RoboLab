@@ -86,6 +86,7 @@ class PutPumpkinInBinTask(Task):
         "default": "Pick up the big and small pumpkins from the table and place them all into the bin",
         "referential": "Put two fruits and place them all into the bin",
         "spelling": "Puck up the pumppins from the table and place them all into the bun.",
+        "specific": "Pick up the big and small pumpkins from the table and place them all into the bin",
     }
     episode_length_s: int = 120
     attributes = ["semantics", "size", "counting", "spatial"]

@@ -19,18 +19,18 @@ from robolab.core.task.task import Task
 
 
 @configclass
-class TwoApplesLeftInBowlTerminations:
-    """Success when the left-hand apple is resting inside the red bowl.
+class TwoMugsLeftInBinTerminations:
+    """Success when the left-hand mug is resting inside the grey bin.
 
-    Dropping the right-hand apple into the bowl aborts the episode as a truncation.
+    Dropping the right-hand mug into the bin aborts the episode as a truncation.
     """
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     undesired_behavior = DoneTerm(
         func=object_in_container,
         params={
-            "object": ["apple_right"],
-            "container": "bowl",
+            "object": ["mug_right"],
+            "container": "bin_b03",
             "tolerance": 0.0,
             "require_contact_with": True,
             "require_gripper_detached": True,
@@ -41,8 +41,8 @@ class TwoApplesLeftInBowlTerminations:
     success = DoneTerm(
         func=object_in_container,
         params={
-            "object": "apple_left",
-            "container": "bowl",
+            "object": "mug_left",
+            "container": "bin_b03",
             "tolerance": 0.0,
             "require_contact_with": True,
             "require_gripper_detached": True,
@@ -51,22 +51,22 @@ class TwoApplesLeftInBowlTerminations:
 
 
 @dataclass
-class TwoApplesLeftInBowlTask(Task):
-    """Clarification target: two identical apples; the ground truth is the one on the robot's left.
+class TwoMugsLeftInBinTask(Task):
+    """Clarification target: two identical red mugs; the ground truth is the one on the robot's left.
 
-    Under the ambiguous prompt pi05 grabs the right-hand apple by default (measured), so the
+    Under the ambiguous prompt pi05 grabs the right-hand mug by default (measured), so the
     baseline fails unless the ambiguity is resolved; the one-line specific prompt names the
     target by position.
     """
 
-    contact_object_list = ["apple_left", "apple_right", "bowl", "table"]
-    scene = import_scene("ecm_scenes/two_apples_bowl.usda", contact_object_list)
-    terminations = TwoApplesLeftInBowlTerminations
+    contact_object_list = ["mug_left", "mug_right", "bin_b03", "table"]
+    scene = import_scene("ecm_scenes/two_mugs_bin.usda", contact_object_list)
+    terminations = TwoMugsLeftInBinTerminations
     instruction = {
-        "default": "Put the left apple in the bowl",
-        "vague": "Put the apple in the bowl",
-        "referential": "Put that apple in the bowl",
-        "specific": "Put the left apple in the bowl",
+        "default": "Put the left mug in the bin",
+        "vague": "Put the mug in the bin",
+        "referential": "Put that mug in the bin",
+        "specific": "Put the left mug in the bin",
     }
     episode_length_s: int = 60
     attributes = ["semantics", "spatial"]
@@ -75,14 +75,14 @@ class TwoApplesLeftInBowlTask(Task):
     subtasks = [
         Subtask(
             conditions={
-                "apple_left": [
-                    (partial(object_grabbed, object="apple_left"), 0.3),
-                    (partial(object_picked_up, object="apple_left", surface="table"), 0.3),
+                "mug_left": [
+                    (partial(object_grabbed, object="mug_left"), 0.3),
+                    (partial(object_picked_up, object="mug_left", surface="table"), 0.3),
                     (
                         partial(
                             object_in_container,
-                            object="apple_left",
-                            container="bowl",
+                            object="mug_left",
+                            container="bin_b03",
                             tolerance=0.0,
                             require_contact_with=True,
                             require_gripper_detached=True,
@@ -92,6 +92,6 @@ class TwoApplesLeftInBowlTask(Task):
                 ],
             },
             logical="all",
-            name="pick_and_place_apple_left",
+            name="pick_and_place_mug_left",
         ),
     ]

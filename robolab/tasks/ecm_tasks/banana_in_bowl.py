@@ -61,6 +61,7 @@ class BananaInBowlTask(Task):
     instruction = {
         "default": "Put the banana into the bowl",
         "vague": "Put it into the bowl",
+        "referential": "Put that into the bowl",
         "specific": "Put the banana at the bottom of the bowl",
     }
     episode_length_s: int = 50

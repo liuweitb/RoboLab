@@ -99,6 +99,10 @@ class BagelsInBowlBananasInPlateTask(Task):
         ),
         "referential": "sort things out",
         "intent": "help me prepare for the breakfast",
+        "specific": (
+            "Pick up the yellow banana and place it flat on the white ceramic plate, "
+            "then put the two bagels in the bowl"
+        ),
     }
     episode_length_s: int = 180
     attributes = ["semantics", "sorting", "spatial"]

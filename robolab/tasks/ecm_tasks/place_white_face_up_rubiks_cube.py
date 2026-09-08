@@ -69,6 +69,7 @@ class PlaceWhiteFaceUpRubiksCubeTask(Task):
         "default": "Pick up the Rubiks Cube with the white face facing up and place it in the bowl",
         "referential": "Put that cube into the bowl",
         "spelling": "Puck that Magic Cube withe the whote surface facing up and place it in the bowl",
+        "specific": "Pick up the Rubiks Cube with the white face facing up and place it in the bowl",
     }
     episode_length_s: int = 60
     attributes = ["color", "semantics", "spatial"]
